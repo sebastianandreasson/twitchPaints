@@ -1,1 +1,30 @@
-{}
+{
+  "name": "twitchPaints",
+  "subdomain": "twitchPaints",
+  "scripts": {
+    "start": ""
+  },
+  "version": "0.0.1",
+  "engines": {
+    "node": "5.x",
+    "npm": "1.2.x"
+  },
+  "dependencies": {
+    "async": "latest",
+    "debug": "latest",
+    "dotenv": "^1.2.0",
+    "express": "latest",
+    "moment": "latest",
+    "mongoose": "latest",
+    "oauth": "^0.9.14",
+    "request": "latest",
+    "socket.io": "0.9.6",
+    "tmi.js": "0.0.24",
+    "twit": "latest",
+    "underscore": "latest",
+    "instagram-node": "latest",
+    "unzip": "latest",
+    "multer": "latest",
+    "body-parser": "latest"
+  }
+}
