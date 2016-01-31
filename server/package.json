@@ -25,6 +25,7 @@
     "instagram-node": "latest",
     "unzip": "latest",
     "multer": "latest",
-    "body-parser": "latest"
+    "body-parser": "latest",
+    "color": "latest"
   }
 }

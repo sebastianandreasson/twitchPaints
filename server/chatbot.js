@@ -2,6 +2,7 @@ var async = require('async'),
     moment = require('moment'),
     irc = require("tmi.js"),
     _ = require('underscore'),
+    color = require('color'),
     debug = require('debug')('chat_bot');
 
 var chatBot = {},
@@ -31,7 +32,7 @@ chatBot.connect = function(channel){
     });
 
     chatBot.client.addListener('chat', function (channel, user, message) {
-        debugVerbose(user.username + ': ' + message);
+        debug(user.username + ': ' + message);
         handleChat(message);
     });
 
@@ -47,23 +48,30 @@ chatBot.connect = function(channel){
 };
 
 var handleChat = function(message){
-    debug(message);
-    var _words = message.split(" ");
-    var emotes = _.chain(_words)
-    .filter(function(word){
-        return _.find(twitchEmotes, function(emote){ return emote === word; });
-    })
-    .map(function(emote){
-        var _id = emoteMapper.emotes[emote].image_id;
-        return {
-            name: emote,
-            id:_id,
-            imageURL: emoteMapper.template.medium.replace("{image_id}", _id)
+    if (message.indexOf("paint") === 0){
+        var args = message.slice(5, message.length).split(",");
+        console.log(args);
+        if (args.length === 3){
+
         }
-    })
-    .value();
-    debug(emotes);
-    chatBot.send({ type: "message", message: message, emoticons: emotes });
+        args = _.map(args, function(s, i){
+            if (i === 0 || i === 1){
+                return parseInt(s);
+            } else {
+                return s;
+            }
+        });
+        console.log(args);
+        var req = {
+            name: "paint",
+            payload: {
+                x: args[0],
+                y: args[1],
+                rgb: color(args[2]).rgbArray()
+            }
+        };
+        if (chatBot.send) chatBot.send(req);
+    }
 };
 
 chatBot.mode = "idle";
