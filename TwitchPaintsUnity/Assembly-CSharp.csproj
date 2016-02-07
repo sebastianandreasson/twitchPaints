@@ -46,13 +46,14 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Environment.cs" />
+     <Compile Include="Assets\Scripts\HUD.cs" />
      <Compile Include="Assets\Scripts\Painting.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\Server\ConcurrentQueue.cs" />
      <Compile Include="Assets\Scripts\Server\FakeServer.cs" />
      <Compile Include="Assets\Scripts\Server\JsonAttribute.cs" />
      <Compile Include="Assets\Scripts\Server\MessageReceiver.cs" />
-     <Compile Include="Assets\Scripts\Server\PaintMessageHandler.cs" />
      <Compile Include="Assets\Scripts\Server\PaintSessionHandler.cs" />
      <Compile Include="Assets\Scripts\Server\PlayerMessageHandler.cs" />
      <Compile Include="Assets\Scripts\Server\PlayerSpawner.cs" />
@@ -60,6 +61,11 @@
      <Compile Include="Assets\Scripts\Server\SimpleJSON.cs" />
      <Compile Include="Assets\Scripts\Server\Tweet.cs" />
      <Compile Include="Assets\Scripts\Server\TwitterHandler.cs" />
+     <Compile Include="Assets\Scripts\iTween\Sample\MoveSample.cs" />
+     <Compile Include="Assets\Scripts\iTween\Sample\RotateSample.cs" />
+     <Compile Include="Assets\Scripts\iTween\Sample\SampleInfo.cs" />
+     <Compile Include="Assets\Scripts\iTween\iTween.cs" />
+     <None Include="Assets\Scripts\iTween\ReadMe!\ReadMe!.txt" />
  <Reference Include="UnityEngine.Analytics">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
  </Reference>

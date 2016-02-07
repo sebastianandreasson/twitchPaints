@@ -16,13 +16,24 @@ public class ServerConnection : MonoBehaviour {
 	
 	[Header("Message receivers")]
 	public GameObject paintSessionHandler; 
-
+	public GameObject hudHandler; 
 
 	public static string MSGTYPE_NEWPLAYERS = "newPlayers";
-	public static string MSGTYPE_NEWPAINTING = "newPainting";
+
+	//Paint related:
 	public static string MSGTYPE_PAINT = "paint";
 	public static string MSGTYPE_SAVEPAINTING = "savePainting";
 
+	//Session related:
+	public static string MSGTYPE_STARTPAINTING = "startPainting";
+	public static string MSGTYPE_ENDPAINTING = "endPainting";
+	public static string MSGTYPE_STARTTHEME = "startTheme";
+	public static string MSGTYPE_ENDTHEME = "endTheme";
+	public static string MSGTYPE_STARTNAMING = "startNaming";
+	public static string MSGTYPE_ENDNAMING = "endNaming";
+
+	//HUD related:
+	public static string MSGTYPE_HUDLIST = "hudList";
 
 	private Dictionary<string, MessageReceiver> messageReceivers = new Dictionary<string, MessageReceiver> ();
 
@@ -56,9 +67,17 @@ public class ServerConnection : MonoBehaviour {
 
 		//this.messageReceivers.Add (MSGTYPE_PLAYERMESSAGE, playerMessageHandler.GetComponent<PlayerMessageHandler> ());
 		//this.messageReceivers.Add (MSGTYPE_NEWPLAYERS, playerSpawner.GetComponent<PlayerSpawner> ());
-		this.messageReceivers.Add (MSGTYPE_NEWPAINTING, paintSessionHandler.GetComponent<PaintSessionHandler> ());
+		this.messageReceivers.Add (MSGTYPE_STARTPAINTING, paintSessionHandler.GetComponent<PaintSessionHandler> ());
+		this.messageReceivers.Add (MSGTYPE_ENDPAINTING, paintSessionHandler.GetComponent<PaintSessionHandler> ());
+		this.messageReceivers.Add (MSGTYPE_STARTTHEME, paintSessionHandler.GetComponent<PaintSessionHandler> ());
+		this.messageReceivers.Add (MSGTYPE_ENDTHEME, paintSessionHandler.GetComponent<PaintSessionHandler> ());
+		this.messageReceivers.Add (MSGTYPE_STARTNAMING, paintSessionHandler.GetComponent<PaintSessionHandler> ());
+		this.messageReceivers.Add (MSGTYPE_ENDNAMING, paintSessionHandler.GetComponent<PaintSessionHandler> ());
+
 		this.messageReceivers.Add (MSGTYPE_SAVEPAINTING, paintSessionHandler.GetComponent<PaintSessionHandler> ());
 		this.messageReceivers.Add (MSGTYPE_PAINT, paintSessionHandler.GetComponent<PaintSessionHandler> ());
+
+		this.messageReceivers.Add (MSGTYPE_HUDLIST, hudHandler.GetComponent<HUD> ());
 
 
 
@@ -90,13 +109,13 @@ public class ServerConnection : MonoBehaviour {
 			client.Connect ();
 			
 			
-			Invoke ("TestPlayers", 3f);
+			//Invoke ("TestPlayers", 3f);
 
 			
 			//InvokeRepeating ("TestConnection", 2f, 2f);
 			//InvokeRepeating ("SendPlayerStats", 5f, 2f);
 
-			Invoke ("SendLevelObjectsToServer", 3f);
+			//Invoke ("SendLevelObjectsToServer", 3f);
 
 
 

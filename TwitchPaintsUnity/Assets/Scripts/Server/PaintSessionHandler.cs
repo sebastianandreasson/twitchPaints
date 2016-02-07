@@ -4,14 +4,26 @@ using System.Collections;
 public class PaintSessionHandler : MonoBehaviour, MessageReceiver {
 
 	public GameObject paintingPrefab;
+	public Environment environment;
 
 	private Painting currentPainting;
 
+	#region Interface
 	public void Receive (SimpleJSON.JSONNode message) {
 				
 		string msgType = message["name"]; 
-		if (msgType == ServerConnection.MSGTYPE_NEWPAINTING) {
-			HandleNewPaintingMessage(message);
+		if (msgType == ServerConnection.MSGTYPE_STARTPAINTING) {
+			HandleStartPaintingSessionMessage(message);
+		} else if (msgType == ServerConnection.MSGTYPE_ENDPAINTING) {
+			HandleEndPaintingSessionMessage(message);
+		} else if (msgType == ServerConnection.MSGTYPE_STARTTHEME) {
+			HandleStartThemeSessionMessage(message);
+		} else if (msgType == ServerConnection.MSGTYPE_ENDTHEME) {
+			HandleEndThemeSessionMessage(message);
+		} else if (msgType == ServerConnection.MSGTYPE_STARTNAMING) {
+			HandleStartNamingSessionMessage(message);
+		} else if (msgType == ServerConnection.MSGTYPE_ENDNAMING) {
+			HandleEndNamingSessionMessage(message);
 		} else if (msgType == ServerConnection.MSGTYPE_PAINT) {
 			HandlePaintMessage(message);
 		} else if (msgType == ServerConnection.MSGTYPE_SAVEPAINTING) {
@@ -19,12 +31,14 @@ public class PaintSessionHandler : MonoBehaviour, MessageReceiver {
 		}
 		
 	}
+	#endregion
 
 	public void HandleSavePaintingMessage() {
 		this.currentPainting.SaveCurrent();
 		StartCoroutine(UploadFile());
 	}
 
+	#region Paint session
 	public void HandlePaintMessage(SimpleJSON.JSONNode node) {
 
 		Debug.Log("Received paint message: " + node);
@@ -32,7 +46,8 @@ public class PaintSessionHandler : MonoBehaviour, MessageReceiver {
 		SimpleJSON.JSONNode message = node["args"][0];
 
 		int x = message["x"].AsInt;
-		int y = this.currentPainting.Height - message["y"].AsInt - 1;
+		//int y = this.currentPainting.Height - message["y"].AsInt - 1;
+		int y = message["y"].AsInt;
 		int r = message["rgb"]["r"].AsInt;
 		int g = message["rgb"]["g"].AsInt;
 		int b = message["rgb"]["b"].AsInt;
@@ -47,7 +62,7 @@ public class PaintSessionHandler : MonoBehaviour, MessageReceiver {
 	}
 
 
-	public void HandleNewPaintingMessage (SimpleJSON.JSONNode node) {
+	public void HandleStartPaintingSessionMessage (SimpleJSON.JSONNode node) {
 		Debug.Log("Received paint session message: " + node);
 
 		SimpleJSON.JSONNode message = node["args"][0];
@@ -59,7 +74,56 @@ public class PaintSessionHandler : MonoBehaviour, MessageReceiver {
 
 		this.currentPainting = go.GetComponent<Painting> ();
 		this.currentPainting.Init(width + 1, height + 1);
+
+		environment.SetToPaintMode();
 	}
+
+	public void HandleEndPaintingSessionMessage(SimpleJSON.JSONNode node) {
+		Debug.Log("Received paint session message: " + node);
+		
+		SimpleJSON.JSONNode message = node["args"][0];
+		
+		//1: Freeze painting:
+		if (this.currentPainting != null) {
+			this.currentPainting.FreezePainting();
+		}
+
+		//2: Send picture:
+		if (this.currentPainting != null) {
+			this.currentPainting.SaveCurrent();
+			StartCoroutine(UploadFile());
+		}
+
+		//3. Change environment
+		this.environment.SetToDisplayMode();
+
+	}
+	#endregion
+
+	#region Naming session
+	public void HandleStartNamingSessionMessage(SimpleJSON.JSONNode node) {
+		Debug.Log("Start naming session. TODO");
+	}
+
+	public void HandleEndNamingSessionMessage(SimpleJSON.JSONNode node) {
+		Debug.Log("End naming session. TODO");
+
+		//Destroy existing painting:
+		if (this.currentPainting != null) {
+			Destroy(this.currentPainting.gameObject);
+		}
+	}
+	#endregion
+
+	#region Theme session
+	public void HandleStartThemeSessionMessage(SimpleJSON.JSONNode node) {
+		Debug.Log("Start theme session. TODO");
+	}
+	
+	public void HandleEndThemeSessionMessage(SimpleJSON.JSONNode node) {
+		Debug.Log("End theme session. TODO");
+	}
+	#endregion
 
 	#region Internal
 	private IEnumerator UploadFile() {
