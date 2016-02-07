@@ -26,6 +26,7 @@
     "unzip": "latest",
     "multer": "latest",
     "body-parser": "latest",
-    "color": "latest"
+    "color": "latest",
+    "imagemagick": "latest"
   }
 }
