@@ -146,7 +146,7 @@ chatBot.getVotingList = function(){
     return list;
 }
 chatBot.getVotingWinner = function(){
-    if (chatBot.votes){
+    if (chatBot.votes && Object.keys(chatBot.votes).length > 0){
         var list = _.chain(chatBot.votes)
         .map(function(val, key){
             return { name: key, votes: val };

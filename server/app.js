@@ -27,9 +27,13 @@ var sessionQueue = async.queue(function(request, callback){
     if (connectedClient) {
         debug("SESSION: " + request.name);
         if (request.name === "endTheme"){
-            request.payload.themeName = chatBot.getVotingWinner().name;
+            if (chatBot.getVotingWinner()){
+                request.payload.themeName = chatBot.getVotingWinner().name;
+            }
         } else if (request.name === "endNaming"){
-            request.payload.paintingName = chatBot.getVotingWinner().name;
+            if (chatBot.getVotingWinner()){
+                request.payload.paintingName = chatBot.getVotingWinner().name;
+            }
         }
         if (request.chatState) chatBot.setState(request.chatState);
         if (request.chatState && request.chatState === "voting"){
