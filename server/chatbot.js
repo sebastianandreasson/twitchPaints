@@ -64,6 +64,7 @@ chatBot.connect = function(channel){
 };
 
 chatBot.handleChat = (message, user) => {
+    console.log(chatBot.players);
     if (message.indexOf("paint") === 0) {
         var args = message.slice(6, message.length).split(" ");
         var alpha = 1;

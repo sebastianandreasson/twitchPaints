@@ -40,7 +40,7 @@ const sessionQueue = async.queue((request, callback) => {
         }
         if (request.chatState) chatBot.setState(request.chatState);
         if (request.chatState && request.chatState === "voting"){
-            handleVoting();
+            setTimeout(handleVoting, request.timeout * 1000);
         }
         requestQueue.push(request);
         setTimeout(callback, request.timeout * 1000);
