@@ -75,11 +75,11 @@ var handleVoting = function(){
 
 var sessions = [
     { name: "startTheme",           chatState: "voting",      payload: { sessionLength: 15 }, timeout: 15 },
-    { name: "endTheme",             chatState: null,          payload: { themeName: "dog" } },
+    { name: "endTheme",             chatState: null,          payload: { themeName: "dog" }, timeout: 2 },
     { name: "startPainting",        chatState: "painting",    payload: { width: 100, height: 100, sessionLength: 60 }, timeout: 60 },
-    { name: "endPainting",          chatState: null,          payload: {} },
+    { name: "endPainting",          chatState: null,          payload: {}, timeout: 2 },
     { name: "startNaming",          chatState: "voting",      payload: { sessionLength: 15 }, timeout: 15 },
-    { name: "endNaming",            chatState: null,          payload: { paintingName: "Twitch Masterpiece" } },
+    { name: "endNaming",            chatState: null,          payload: { paintingName: "Twitch Masterpiece" }, timeout: 2 },
 ];
 
 const randomColor = () => {
