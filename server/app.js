@@ -119,7 +119,7 @@ io.sockets.on("connection", (socket) => {
         connectedClient = socket;
         if (options){
             debug_socket(options);
-            async.each(sessions, (session, callback){
+            async.each(sessions, (session, callback) => {
                 async.each(options, (option, optionCallback) => {
                     if (option.name === session.name) {
                         session.timeout = option.sessionLength;
