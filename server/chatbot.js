@@ -111,23 +111,32 @@ chatBot.handleChat = (message, user) => {
         }
     }
     else if (chatBot.players[user]){
+        let matched = false;
         switch (message) {
             case "left":
-                 chatBot.players[user].x += chatBot.players[user].size;
+                chatBot.players[user].x += chatBot.players[user].size;
+                matched = true;
                 break;
             case "right":
-                 chatBot.players[user].x -= chatBot.players[user].size;
+                chatBot.players[user].x -= chatBot.players[user].size;
+                matched = true;
                 break;
             case "up":
-                 chatBot.players[user].y += chatBot.players[user].size;
+                chatBot.players[user].y += chatBot.players[user].size;
+                matched = true;
                 break;
             case "down":
-                 chatBot.players[user].y -= chatBot.players[user].size;
+                chatBot.players[user].y -= chatBot.players[user].size;
+                matched = true;
                 break;
+            case "r":
+            case "redo":
+            case "re":
+                matched = true;
             default:
                 break;
         }
-        if (chatBot.send) chatBot.send({ name: "paint", payload: chatBot.players[user] });
+        if (chatBot.send && matched) chatBot.send({ name: "paint", payload: chatBot.players[user] });
     }
 };
 
@@ -173,10 +182,10 @@ chatBot.setState = (state) => {
     chatBot.state = state;
     switch (state) {
         case "painting":
-            chatBot.players = {};
+            chatBot.votes = {};
             break;
         case "voting":
-            chatBot.votes = {};
+            chatBot.players = {};
         default:
             break;
     }
