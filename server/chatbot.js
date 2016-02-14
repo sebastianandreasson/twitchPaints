@@ -98,6 +98,18 @@ chatBot.handleChat = (message, user) => {
         chatBot.players[user] = req.payload;
         if (chatBot.send) chatBot.send(req);
     }
+    else if (message.indexOf("alpha") === 0 && chatBot.players[user]){
+        var args = message.slice(6, message.length).split(" ");
+        if (args){
+            chatBot.players[user].rgb.a = parseInt(args[1]);
+        }
+    }
+    else if (message.indexOf("size") === 0 && chatBot.players[user]){
+        var args = message.slice(5, message.length).split(" ");
+        if (args){
+            chatBot.players[user].size = parseInt(args[1]);
+        }
+    }
     else if (chatBot.players[user]){
         switch (message) {
             case "left":

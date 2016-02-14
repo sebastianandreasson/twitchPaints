@@ -28,28 +28,31 @@ const requestQueue = async.queue((request, callback) => {
 
 const sessionQueue = async.queue((request, callback) => {
     if (connectedClient) {
-        debug("SESSION: " + request.name);
-        if (request.name === "endTheme"){
-            if (chatBot.getVotingWinner()){
-                request.payload.themeName = chatBot.getVotingWinner().name;
-            }
-        } else if (request.name === "endNaming"){
-            if (chatBot.getVotingWinner()){
-                request.payload.paintingName = chatBot.getVotingWinner().name;
-            }
-        }
+        debug("start session: " + request.name);
+        requestQueue.push(request);
         if (request.chatState) chatBot.setState(request.chatState);
         if (request.chatState && request.chatState === "voting"){
-            setTimeout(function(){
-                handleVoting();
-                callback();
-            }, request.timeout * 1000);
-            requestQueue.push(request);
+            handleVoting();
         }
-        else{
-            setTimeout(callback, request.timeout * 1000);
-            requestQueue.push(request);
-        }
+
+        setTimeout(() => {
+            debug("end session: " + request.name);
+            switch (request.name) {
+                case "endTheme":
+                    if (chatBot.getVotingWinner()){
+                        request.payload.themeName = chatBot.getVotingWinner().name;
+                    }
+                    break;
+                case "endNaming":
+                    if (chatBot.getVotingWinner()){
+                        request.payload.paintingName = chatBot.getVotingWinner().name;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            callback();
+        }, request.timeout * 1000);
     }
     else{
         callback();
