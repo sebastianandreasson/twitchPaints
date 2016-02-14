@@ -114,12 +114,32 @@ const randomColor = () => {
 io.sockets.on("connection", (socket) => {
     debug_socket('socket is connected!');
 
-    socket.on("start", () => {
+    socket.on("start", (options) => {
         debug_socket('socket sent start!');
         connectedClient = socket;
-        sessionQueue.push(sessions);
-        chatBot.newStream("sebastaindeveloperaccount");
-        chatBot.addListener(requestQueue);
+        if (options){
+            debug_socket(options);
+            async.each(sessions, (session, callback){
+                async.each(options, (option, optionCallback) => {
+                    if (option.name === session.name) {
+                        session.timeout = option.sessionLength;
+                        session.payload.sessionLength = option.sessionLength;
+                    }
+                    optionCallback();
+                }, callback);
+            }, () => {
+                debug_socket("set all, start");
+                sessionQueue.push(sessions);
+                chatBot.newStream("sebastaindeveloperaccount");
+                chatBot.addListener(requestQueue);
+            });
+        }
+        else{
+            debug_socket("got no options, start with default");
+            sessionQueue.push(sessions);
+            chatBot.newStream("sebastaindeveloperaccount");
+            chatBot.addListener(requestQueue);
+        }
     });
 
     socket.on("error", (e) => {
