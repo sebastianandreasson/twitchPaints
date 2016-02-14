@@ -84,7 +84,7 @@ var handleVoting = function(){
     }, 500);
 };
 
-var sessions = [
+let sessions = [
     { name: "startTheme",           chatState: "voting",      payload: { sessionLength: 15 }, timeout: 15 },
     { name: "endTheme",             chatState: null,          payload: { themeName: "dog" }, timeout: 4 },
     { name: "startPainting",        chatState: "painting",    payload: { width: 100, height: 100, sessionLength: 60 }, timeout: 60 },
@@ -119,9 +119,13 @@ io.sockets.on("connection", (socket) => {
         connectedClient = socket;
         if (options){
             debug_socket(options);
+            debug_socket(typeof options);
             async.each(sessions, (session, callback) => {
+                debug_socket(session);
                 async.each(options, (option, optionCallback) => {
+                    debug_socket(option);
                     if (option.name === session.name) {
+                        debug("matched, set new sessionLength");
                         session.timeout = option.sessionLength;
                         session.payload.sessionLength = option.sessionLength;
                     }
@@ -129,6 +133,7 @@ io.sockets.on("connection", (socket) => {
                 }, callback);
             }, () => {
                 debug_socket("set all, start");
+                debug_socket(sessions);
                 sessionQueue.push(sessions);
                 chatBot.newStream("sebastaindeveloperaccount");
                 chatBot.addListener(requestQueue);
