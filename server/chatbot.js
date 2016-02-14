@@ -1,19 +1,20 @@
-var async = require('async'),
-    moment = require('moment'),
-    irc = require("tmi.js"),
-    _ = require('underscore'),
-    color = require('color'),
-    debug = require('debug')('chat_bot');
+import async from "async";
+import moment from "moment";
+import irc from "tmi.js";
+import _ from "underscore";
+import color from "color";
+import debug_module from "debug";
 
-// process.on('uncaughtException', function (err) {
-//     console.error(err);
-//     console.log("Node NOT Exiting...");
-// });
+const debug = debug_module("chat_bot");
+
+process.on('uncaughtException', function (err) {
+    console.error(err);
+    console.log("Node NOT Exiting...");
+});
 
 var chatBot = {};
 chatBot.players = {};
 chatBot.votes = {};
-charRegex = new RegExp("^[a-zA-Z ]+$");
 
 chatBot.connect = function(channel){
     if (chatBot.client){
@@ -34,11 +35,11 @@ chatBot.connect = function(channel){
         channels: ["#" + channel]
     });
 
-    chatBot.client.on('error', function(){
+    chatBot.client.on("error", () =>{
     });
 
-    chatBot.client.addListener('chat', function (channel, user, message) {
-        debug(user.username + ': ' + message);
+    chatBot.client.addListener("chat", (channel, user, message) => {
+        debug(user.username + ": " + message);
         switch (chatBot.state) {
             case "painting":
                 chatBot.handleChat(message, user);
@@ -51,24 +52,24 @@ chatBot.connect = function(channel){
         };
     });
 
-    chatBot.client.addListener('part', function(channel, username){
-        debug('parted:' + username);
+    chatBot.client.addListener("part", (channel, username) => {
+        debug("parted: " + username);
     });
 
-    chatBot.client.addListener('error', function(err){
+    chatBot.client.addListener("error", (err) => {
         debug(err);
     });
 
     chatBot.client.connect();
 };
 
-chatBot.handleChat = function(message, user){
+chatBot.handleChat = (message, user) => {
     console.log(players);
     if (message.indexOf("paint") === 0) {
         var args = message.slice(6, message.length).split(" ");
         var alpha = 1;
         var size = 1;
-        args = _.map(args, function(s, i){
+        args = _.map(args, (s, i) => {
             if (i === 0 || i === 1){
                 return parseInt(s);
             } else if (i === 2 && s.indexOf(",") != -1){
@@ -94,16 +95,9 @@ chatBot.handleChat = function(message, user){
             }
         };
         req.payload.rgb["a"] = args.length > 3 ? parseFloat(args[3]) : alpha;
-        console.log(req);
         chatBot.players[user] = req.payload;
         if (chatBot.send) chatBot.send(req);
     }
-    // else if (message === "save") {
-    //     if (chatBot.send) chatBot.send({ name: "savePainting", payload: {}});
-    // }
-    // else if (message === "clear") {
-    //     if (chatBot.send) chatBot.send({ name: "newPainting", payload: { width: 100, height: 100 }});
-    // }
     else if (chatBot.players[user]){
         switch (message) {
             case "left":
@@ -125,7 +119,7 @@ chatBot.handleChat = function(message, user){
     }
 };
 
-chatBot.handleVoting = function(message, user){
+chatBot.handleVoting = (message, user) => {
     if (chatBot.votes[message]){
         chatBot.votes[message]++;
     }
@@ -134,7 +128,7 @@ chatBot.handleVoting = function(message, user){
     }
 };
 
-chatBot.getVotingList = function(){
+chatBot.getVotingList = () => {
     var list = _.chain(chatBot.votes)
     .map(function(val, key){
         return { name: key, votes: val };
@@ -145,7 +139,7 @@ chatBot.getVotingList = function(){
     .value().slice(0, 10);
     return list;
 }
-chatBot.getVotingWinner = function(){
+chatBot.getVotingWinner = () => {
     if (chatBot.votes && Object.keys(chatBot.votes).length > 0){
         var list = _.chain(chatBot.votes)
         .map(function(val, key){
@@ -162,7 +156,7 @@ chatBot.getVotingWinner = function(){
     }
 };
 
-chatBot.setState = function(state){
+chatBot.setState = (state) => {
     debug("SET CHATSTATE: " + state);
     chatBot.state = state;
     switch (state) {
@@ -177,13 +171,12 @@ chatBot.setState = function(state){
 };
 
 chatBot.mode = "idle";
-chatBot.addListener = function(requestQueue){
+chatBot.addListener = (requestQueue) => {
     chatBot.send = requestQueue.push;
 };
-chatBot.newStream = function(channel){
-    chatBot.connect(channel);
-};
-chatBot.endStream = function(){
+chatBot.newStream = (channel) => chatBot.connect(channel);
+
+chatBot.endStream = () => {
     if (chatBot.client){
         chatBot.client.disconnect();
         chatBot.client = null;
@@ -191,15 +184,3 @@ chatBot.endStream = function(){
 };
 
 module.exports = chatBot;
-
-// if (args.length > 5){
-//     var rgbcolor = args.slice(2).join(",");
-//     var brush = 1;
-//     if (args.length >= 6){
-//         brush = args.slice(args.length-1, args.length);
-//     }
-//     args = args.slice(0,2);
-//
-//     args.push("rgb(" + rgbcolor + ")");
-//     args.push(brush);
-// }

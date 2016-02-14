@@ -1,21 +1,24 @@
-var io = require('socket.io').listen(1338),
-    async = require('async'),
-    moment = require('moment'),
-    _ = require('underscore'),
-    express = require('express'),
-    bodyParser = require('body-parser'),
-    multer = require('multer'),
-    debug_socket = require('debug')('socket');
-    debug = require('debug')('server');
+import socketIO from "socket.io";
+import async from "async";
+import moment from "moment";
+import _ from "underscore";
+import express from "express";
+import bodyParser from "body-parser";
+import multer from "multer";
+import debug_module from "debug";
 
-var chatBot = require('./chatbot.js');
-var painter = require('./painter.js');
+import chatBot from "./chatbot";
+import painter from "./painter";
+
+const debug = debug_module("server");
+const debug_socket = debug_module("socket");
 
 var connectedClient;
-var app = express();
-io.set('log level', 1);
+const app = express();
+const io = socketIO.listen(1338);
+io.set("log level", 1);
 
-var requestQueue = async.queue(function(request, callback){
+const requestQueue = async.queue((request, callback) => {
     debug(request);
     if (connectedClient){
         connectedClient.emit(request.name, request.payload);
@@ -23,7 +26,7 @@ var requestQueue = async.queue(function(request, callback){
     callback();
 });
 
-var sessionQueue = async.queue(function(request, callback){
+const sessionQueue = async.queue((request, callback) => {
     if (connectedClient) {
         debug("SESSION: " + request.name);
         if (request.name === "endTheme"){
@@ -46,7 +49,7 @@ var sessionQueue = async.queue(function(request, callback){
         callback();
     }
 }, 1);
-sessionQueue.drain = function(){
+sessionQueue.drain = () => {
     if (connectedClient){
         debug("drained, reset!");
         sessionQueue.push(sessions);
@@ -55,6 +58,7 @@ sessionQueue.drain = function(){
         debug("drainged but no client, so do nothing");
     }
 };
+
 var handleVoting = function(){
     console.log("handleVoting");
     setTimeout(function(){
@@ -78,7 +82,7 @@ var sessions = [
     { name: "endNaming",            chatState: null,          payload: { paintingName: "Twitch Masterpiece" } },
 ];
 
-randomColor = function(){
+const randomColor = () => {
     if (connectedClient){
         connectedClient.emit("paint", {
             x: Math.floor(Math.random() * 100) + 1,
@@ -96,7 +100,7 @@ randomColor = function(){
     }
 };
 
-io.sockets.on('connection', function (socket) {
+io.sockets.on("connection", (socket) => {
     debug_socket('socket is connected!');
     if (!connectedClient){
         connectedClient = socket;
@@ -124,30 +128,25 @@ io.sockets.on('connection', function (socket) {
 
 app.use(bodyParser());
 
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, __dirname + '/upload/')
+const storage = multer.diskStorage({
+    destination(req, file, cb){
+        cb(null, __dirname + "/upload/")
     },
-    filename: function (req, file, cb) {
+    filename(req, file, cb){
         cb(null, file.originalname);
     }
 });
-var upload = multer({ dest: __dirname + '/upload', storage: storage }).single('file');
+const upload = multer({ dest: __dirname + "/upload", storage: storage }).single("file");
 
-function uploadHandler (req, res, next) {
+const uploadHandler = (req, res, next) => {
     if (req.url !== '/upload' || req.method !== 'POST') return next()
-    console.log(req.file);
-    upload(req, res, function (err) {
-        console.log(err);
-        if (err) return next(err)
-        console.log('UPLOAD FINISHED')
-        // console.log(req.files)
-        // console.log(req);
+    upload(req, res, (err) => {
+        if (err) return next(err);
     })
 }
 
 app.use(uploadHandler);
-app.post('/upload', function (req, res) {
+app.post("/upload", (req, res) => {
     // console.log(req);
     res.send({ code: 200 });
 });
