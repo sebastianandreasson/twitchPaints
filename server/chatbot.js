@@ -112,27 +112,30 @@ chatBot.handleChat = (message, user) => {
     }
     else if (chatBot.players[user]){
         let matched = false;
+        if (message === "r" || message === "re" || message === "redo") {
+            message = chatBot.players[user].lastCommand;
+        }
         switch (message) {
             case "left":
                 chatBot.players[user].x += chatBot.players[user].size;
+                chatBot.players[user].lastCommand = message;
                 matched = true;
                 break;
             case "right":
                 chatBot.players[user].x -= chatBot.players[user].size;
+                chatBot.players[user].lastCommand = message;
                 matched = true;
                 break;
             case "up":
                 chatBot.players[user].y += chatBot.players[user].size;
+                chatBot.players[user].lastCommand = message;
                 matched = true;
                 break;
             case "down":
                 chatBot.players[user].y -= chatBot.players[user].size;
+                chatBot.players[user].lastCommand = message;
                 matched = true;
                 break;
-            case "r":
-            case "redo":
-            case "re":
-                matched = true;
             default:
                 break;
         }
@@ -182,10 +185,10 @@ chatBot.setState = (state) => {
     chatBot.state = state;
     switch (state) {
         case "painting":
-            chatBot.votes = {};
+            chatBot.players = {};
             break;
         case "voting":
-            chatBot.players = {};
+            chatBot.votes = {};
         default:
             break;
     }

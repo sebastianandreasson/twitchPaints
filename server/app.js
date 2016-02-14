@@ -30,6 +30,7 @@ const sessionQueue = async.queue((request, callback) => {
     if (connectedClient) {
         debug("start session: " + request.name);
         requestQueue.push(request);
+        const votingWinner = chatBot.getVotingWinner() ? chatBot.getVotingWinner().name : null;
         if (request.chatState) chatBot.setState(request.chatState);
         if (request.chatState && request.chatState === "voting"){
             handleVoting();
@@ -39,13 +40,13 @@ const sessionQueue = async.queue((request, callback) => {
             debug("end session: " + request.name);
             switch (request.name) {
                 case "endTheme":
-                    if (chatBot.getVotingWinner()){
-                        request.payload.themeName = chatBot.getVotingWinner().name;
+                    if (votingWinner){
+                        request.payload.themeName = votingWinner;
                     }
                     break;
                 case "endNaming":
-                    if (chatBot.getVotingWinner()){
-                        request.payload.paintingName = chatBot.getVotingWinner().name;
+                    if (votingWinner){
+                        request.payload.paintingName = votingWinner;
                     }
                     break;
                 default:
