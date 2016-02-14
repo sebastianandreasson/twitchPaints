@@ -101,28 +101,28 @@ chatBot.handleChat = (message, user) => {
     else if (message.indexOf("alpha") === 0 && chatBot.players[user]){
         var args = message.slice(6, message.length).split(" ");
         if (args){
-            chatBot.players[user].rgb.a = parseInt(args[1]);
+            chatBot.players[user].rgb.a = parseInt(args[0]);
         }
     }
     else if (message.indexOf("size") === 0 && chatBot.players[user]){
         var args = message.slice(5, message.length).split(" ");
         if (args){
-            chatBot.players[user].size = parseInt(args[1]);
+            chatBot.players[user].size = parseInt(args[0]);
         }
     }
     else if (chatBot.players[user]){
         switch (message) {
             case "left":
-                 chatBot.players[user].x -= chatBot.players[user].size;
-                break;
-            case "right":
                  chatBot.players[user].x += chatBot.players[user].size;
                 break;
+            case "right":
+                 chatBot.players[user].x -= chatBot.players[user].size;
+                break;
             case "up":
-                 chatBot.players[user].y -= chatBot.players[user].size;
+                 chatBot.players[user].y += chatBot.players[user].size;
                 break;
             case "down":
-                 chatBot.players[user].y += chatBot.players[user].size;
+                 chatBot.players[user].y -= chatBot.players[user].size;
                 break;
             default:
                 break;

@@ -108,7 +108,6 @@ const randomColor = () => {
         }, 1);
     }
 };
-chatBot.newStream("sebastaindeveloperaccount");
 
 io.sockets.on("connection", (socket) => {
     debug_socket('socket is connected!');
