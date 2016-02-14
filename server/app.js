@@ -29,8 +29,23 @@ const requestQueue = async.queue((request, callback) => {
 const sessionQueue = async.queue((request, callback) => {
     if (connectedClient) {
         debug("start session: " + request.name);
-        requestQueue.push(request);
         const votingWinner = chatBot.getVotingWinner() ? chatBot.getVotingWinner().name : null;
+        switch (request.name) {
+            case "endTheme":
+                if (votingWinner){
+                    request.payload.themeName = votingWinner;
+                }
+                break;
+            case "endNaming":
+                if (votingWinner){
+                    request.payload.paintingName = votingWinner;
+                }
+                break;
+            default:
+                break;
+        }
+        requestQueue.push(request);
+
         if (request.chatState) chatBot.setState(request.chatState);
         if (request.chatState && request.chatState === "voting"){
             handleVoting();
@@ -38,20 +53,6 @@ const sessionQueue = async.queue((request, callback) => {
 
         setTimeout(() => {
             debug("end session: " + request.name);
-            switch (request.name) {
-                case "endTheme":
-                    if (votingWinner){
-                        request.payload.themeName = votingWinner;
-                    }
-                    break;
-                case "endNaming":
-                    if (votingWinner){
-                        request.payload.paintingName = votingWinner;
-                    }
-                    break;
-                default:
-                    break;
-            }
             callback();
         }, request.timeout * 1000);
     }
@@ -85,11 +86,11 @@ var handleVoting = function(){
 
 var sessions = [
     { name: "startTheme",           chatState: "voting",      payload: { sessionLength: 15 }, timeout: 15 },
-    { name: "endTheme",             chatState: null,          payload: { themeName: "dog" }, timeout: 2 },
+    { name: "endTheme",             chatState: null,          payload: { themeName: "dog" }, timeout: 4 },
     { name: "startPainting",        chatState: "painting",    payload: { width: 100, height: 100, sessionLength: 60 }, timeout: 60 },
-    { name: "endPainting",          chatState: null,          payload: {}, timeout: 2 },
+    { name: "endPainting",          chatState: null,          payload: {}, timeout: 4 },
     { name: "startNaming",          chatState: "voting",      payload: { sessionLength: 15 }, timeout: 15 },
-    { name: "endNaming",            chatState: null,          payload: { paintingName: "Twitch Masterpiece" }, timeout: 2 },
+    { name: "endNaming",            chatState: null,          payload: { paintingName: "Twitch Masterpiece" }, timeout: 4 },
 ];
 
 const randomColor = () => {
