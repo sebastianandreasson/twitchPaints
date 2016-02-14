@@ -102,21 +102,20 @@ const randomColor = () => {
 
 io.sockets.on("connection", (socket) => {
     debug_socket('socket is connected!');
-    if (!connectedClient){
+
+    socket.on("start", () => {
+        debug_socket('socket sent start!');
         connectedClient = socket;
         sessionQueue.push(sessions);
         chatBot.newStream("sebastaindeveloperaccount");
         chatBot.addListener(requestQueue);
-    }
-    // setTimeout(function(){
-    //     painter.paint();
-    // }, 3000);
+    });
 
-    socket.on('error', function(e){
+    socket.on("error", (e) => {
        debug(e);
     });
 
-    socket.on('disconnect', function(){
+    socket.on("disconnect", () => {
         debug("CLIENT DISCONNECT");
         if (socket === connectedClient) {
             connectedClient = null;
