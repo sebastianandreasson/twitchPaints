@@ -42,10 +42,10 @@ chatBot.connect = function(channel){
         debug(user.username + ": " + message);
         switch (chatBot.state) {
             case "painting":
-                chatBot.handleChat(message, user);
+                chatBot.handleChat(message, user.username);
                 break;
             case "voting":
-                chatBot.handleVoting(message, user);
+                chatBot.handleVoting(message, user.username);
                 break;
             default:
                 break;

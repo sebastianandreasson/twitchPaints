@@ -40,10 +40,16 @@ const sessionQueue = async.queue((request, callback) => {
         }
         if (request.chatState) chatBot.setState(request.chatState);
         if (request.chatState && request.chatState === "voting"){
-            setTimeout(handleVoting, request.timeout * 1000);
+            setTimeout(function(){
+                handleVoting();
+                callback();
+            }, request.timeout * 1000);
+            requestQueue.push(request);
         }
-        requestQueue.push(request);
-        setTimeout(callback, request.timeout * 1000);
+        else{
+            setTimeout(callback, request.timeout * 1000);
+            requestQueue.push(request);
+        }
     }
     else{
         callback();
@@ -99,6 +105,7 @@ const randomColor = () => {
         }, 1);
     }
 };
+chatBot.newStream("sebastaindeveloperaccount");
 
 io.sockets.on("connection", (socket) => {
     debug_socket('socket is connected!');
