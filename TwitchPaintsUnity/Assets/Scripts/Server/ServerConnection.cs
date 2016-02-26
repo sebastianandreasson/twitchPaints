@@ -93,8 +93,8 @@ public class ServerConnection : MonoBehaviour {
 
 
 			Debug.Log("connect!");
-			string url = "http://192.168.0.5:1338/";
-			//string url = "http://46.101.225.117:1338"; //Sebastians Droplet server
+			//string url = "http://192.168.0.5:1338/";
+			string url = "http://46.101.225.117:1338"; //Sebastians Droplet server
 			
 			Debug.Log(url);
 			
@@ -108,7 +108,12 @@ public class ServerConnection : MonoBehaviour {
 			
 			client.Connect ();
 			
-			
+
+			//Request start game:
+
+			client.Emit("start", "[   { name: \"startTheme\", sessionLength: 6 },   { name: \"endTheme\", sessionLength: 1 },   { name: \"startPainting\", sessionLength: 15 },   { name: \"endPainting\", sessionLength: 1 },   { name: \"startNaming\", sessionLength: 5 },   { name: \"endNaming\", sessionLength: 1 }];");
+			//client.Emit("start", null);
+
 			//Invoke ("TestPlayers", 3f);
 
 			
@@ -242,7 +247,7 @@ public class ServerConnection : MonoBehaviour {
 	void Update () {
 		if (messageQ.Count > 0) {
 			SimpleJSON.JSONNode node = messageQ.Dequeue();
-			Debug.LogWarning("Consuming server message: " + node["name"]);
+			//Debug.LogWarning("Consuming server message: " + node["name"]);
 			ConsumeMessage(node);
 		}
 	}

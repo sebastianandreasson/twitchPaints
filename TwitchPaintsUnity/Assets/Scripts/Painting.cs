@@ -108,7 +108,7 @@ public class Painting : MonoBehaviour {
 	#endregion
 
 	public void SaveCurrent() {
-		System.IO.File.WriteAllBytes(Application.dataPath + "/painting.png", this.texture.EncodeToPNG());
+		//System.IO.File.WriteAllBytes(Application.dataPath + "/painting.png", this.texture.EncodeToPNG());
 	}
 
 	#region Transformations

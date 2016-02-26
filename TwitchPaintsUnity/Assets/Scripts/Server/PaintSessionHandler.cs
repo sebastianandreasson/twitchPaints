@@ -5,6 +5,7 @@ public class PaintSessionHandler : MonoBehaviour, MessageReceiver {
 
 	public GameObject paintingPrefab;
 	public Environment environment;
+	public HUD hud;
 
 	private Painting currentPainting;
 
@@ -76,6 +77,8 @@ public class PaintSessionHandler : MonoBehaviour, MessageReceiver {
 		this.currentPainting.Init(width + 1, height + 1);
 
 		environment.SetToPaintMode();
+
+		//ToDo: Set subtitle
 	}
 
 	public void HandleEndPaintingSessionMessage(SimpleJSON.JSONNode node) {
@@ -97,12 +100,17 @@ public class PaintSessionHandler : MonoBehaviour, MessageReceiver {
 		//3. Change environment
 		this.environment.SetToDisplayMode();
 
+		//Stop showing subtitle:
+		this.hud.Clear(true);
+
 	}
 	#endregion
 
 	#region Naming session
 	public void HandleStartNamingSessionMessage(SimpleJSON.JSONNode node) {
 		Debug.Log("Start naming session. TODO");
+
+		this.hud.SetHeader("What should we call this Masterpiece?");
 	}
 
 	public void HandleEndNamingSessionMessage(SimpleJSON.JSONNode node) {
@@ -112,16 +120,29 @@ public class PaintSessionHandler : MonoBehaviour, MessageReceiver {
 		if (this.currentPainting != null) {
 			Destroy(this.currentPainting.gameObject);
 		}
+
+		//Clear HUD:
+		this.hud.Clear (true);
+
+
 	}
 	#endregion
 
 	#region Theme session
 	public void HandleStartThemeSessionMessage(SimpleJSON.JSONNode node) {
 		Debug.Log("Start theme session. TODO");
+		this.hud.SetHeader("What is the theme for the next painting?");
 	}
 	
 	public void HandleEndThemeSessionMessage(SimpleJSON.JSONNode node) {
 		Debug.Log("End theme session. TODO");
+
+		//Clear HUD:
+		this.hud.Clear (true);
+
+		string chosenTheme = node["args"][0]["themeName"];
+
+		this.hud.SetSubtitle("Theme: " + chosenTheme);
 	}
 	#endregion
 
